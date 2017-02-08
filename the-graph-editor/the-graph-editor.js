@@ -76,21 +76,24 @@ function getDefaultMenus(editor) {
     nodeInport: {
       w4: {
         icon: "sign-in",
-        iconLabel: "export",
+        iconLabel: "import",
         action: function (graph, itemKey, item) {
-          var pub = item.port;
-          if (pub === 'start') {
-            pub = 'start1';
-          }
-          if (pub === 'graph') {
-            pub = 'graph1';
-          }
-          var count = 0;
-          // Make sure public is unique
-          while (graph.inports[pub]) {
-            count++;
-            pub = item.port + count;
-          }
+          // choose from the input ports!!
+          var pub = window.prompt("Name this group", item.port);
+          if (pub === null) name = item.port;
+          // var pub = item.port;
+          // if (pub === 'start') {
+          //   pub = 'start1';
+          // }
+          // if (pub === 'graph') {
+          //   pub = 'graph1';
+          // }
+          // var count = 0;
+          // // Make sure public is unique
+          // while (graph.inports[pub]) {
+          //   count++;
+          //   pub = item.port + count;
+          // }
           var priNode = graph.getNode(item.process);
           var metadata = {x:priNode.metadata.x-144, y:priNode.metadata.y};
           graph.addInport(pub, item.process, item.port, metadata);
@@ -102,15 +105,15 @@ function getDefaultMenus(editor) {
         icon: "sign-out",
         iconLabel: "export",
         action: function (graph, itemKey, item) {
-          var pub = item.port;
-          var count = 0;
-          // Make sure public is unique
-          while (graph.outports[pub]) {
-            count++;
-            pub = item.port + count;
-          }
+          var pub = "price";
+          // var count = 0;
+          // // Make sure public is unique
+          // while (graph.outports[pub]) {
+          //   count++;
+          //   pub = item.port + count;
+          // }
           var priNode = graph.getNode(item.process);
-          var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y};
+          var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y, icon:"dollar"};
           graph.addOutport(pub, item.process, item.port, metadata);
         }
       }
@@ -157,6 +160,16 @@ function getDefaultMenus(editor) {
     },
     selection: {
       icon: "th",
+      n4: {
+        icon: "object-group",
+        iconLabel: "group",
+        action: function (graph, itemKey, item) {
+          var name = window.prompt("Name this group", "group1");
+          if (name === null) name = "group1";
+          console.log(name);
+          graph.addGroup(name, item.nodes, item.metadata);
+        }
+      },
       w4: {
         icon: "copy",
         iconLabel: "copy",

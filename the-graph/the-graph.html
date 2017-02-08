@@ -144,6 +144,12 @@
           }
         } else {
           this.selectedNodes = [item];
+
+          //TODO - this is just for testing
+          if(item.component == "const") {
+             var ret = window.prompt("Set constant",item.metadata.const.toString());
+             if (ret !== null) item.metadata.const = parseFloat(ret);
+           }
         }
         this.fire('nodes', this.selectedNodes);
       },

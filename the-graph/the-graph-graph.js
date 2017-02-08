@@ -175,7 +175,31 @@ module.exports.register = function (context) {
       this.markDirty();
     },
     addEdge: function (edge) {
-      this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
+      var graph = this.state.graph;
+      var fromNode = graph.getNode(edge.from.process);
+      var toNode = graph.getNode(edge.to.process);
+      var outType = this.getOutType(fromNode, edge.from.port);
+      var inType = this.getInType(toNode, edge.to.port);
+
+      // TODO : this is fragile, make this more robust!!!
+      edge.metadata.route = (function x(a){switch(a){   
+        case "String": return 1;
+        case "Number": return 3;
+        default: return 0;
+      }})(inType);
+      if(outType == inType) this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
+    },
+    getType: function(ports, port) {
+      for (var i=0; i<ports.length; i++) { 
+        if(ports[i].name == port) return ports[i].type;
+      }
+      return "";
+    },
+    getInType: function(node, port) {
+      return this.getType(this.getComponentInfo(node.component).inports, port);
+    },
+    getOutType: function(node, port) {
+      return this.getType(this.getComponentInfo(node.component).outports, port);
     },
     moveGroup: function (nodes, dx, dy) {
       var graph = this.state.graph;
