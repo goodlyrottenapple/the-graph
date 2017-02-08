@@ -6,5 +6,4 @@ node_modules/
 npm-debug.log
 /spec/*.js
 
-/the-graph/font-awesome-unicode-map.js
 inprimo.html
