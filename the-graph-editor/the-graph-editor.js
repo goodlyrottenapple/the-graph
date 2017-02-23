@@ -35,14 +35,16 @@ function getDefaultMenus(editor) {
     delete: function (graph, itemKey, item) {
       graph.removeEdge(item.from.node, item.from.port, item.to.node, item.to.port);
       // Remove selection
-      var newSelection = [];
-      for (var i=0, len=this.selectedEdges.length; i<len; i++){
-        var selected = this.selectedEdges[i];
-        if (selected !== item) {
-          newSelection.push(selected);
+      if(this.selectedEdges !== undefined){
+        var newSelection = [];
+        for (var i=0, len=this.selectedEdges.length; i<len; i++){
+          var selected = this.selectedEdges[i];
+          if (selected !== item) {
+            newSelection.push(selected);
+          }
         }
+        this.selectedEdges = newSelection;
       }
-      this.selectedEdges = newSelection;
     }.bind(this)
   };
 
@@ -78,7 +80,7 @@ function getDefaultMenus(editor) {
         icon: "sign-in",
         iconLabel: "import",
         action: function (graph, itemKey, item) {
-          // choose from the input ports!!
+          // TODO : choose from the input ports!!
           var pub = window.prompt("Name this group", item.port);
           if (pub === null) name = item.port;
           // var pub = item.port;
@@ -112,9 +114,11 @@ function getDefaultMenus(editor) {
           //   count++;
           //   pub = item.port + count;
           // }
-          var priNode = graph.getNode(item.process);
-          var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y, icon:"dollar"};
-          graph.addOutport(pub, item.process, item.port, metadata);
+          if(item.type == "Float"){
+            var priNode = graph.getNode(item.process);
+            var metadata = {x:priNode.metadata.x+144, y:priNode.metadata.y, icon:"dollar"};
+            graph.addOutport(pub, item.process, item.port, metadata);
+          }
         }
       }
     },

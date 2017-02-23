@@ -183,11 +183,90 @@ module.exports.register = function (context) {
 
       // TODO : this is fragile, make this more robust!!!
       edge.metadata.route = (function x(a){switch(a){   
-        case "String": return 1;
-        case "Number": return 3;
+        case "Text": return 1;
+        case "Float": return 3;
         default: return 0;
       }})(inType);
-      if(outType == inType) this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
+      // console.log(this.inEdges(edge.to.process, edge.to.port));
+      if(this.typeSubset(outType, inType) && this.inEdgesP(edge.to.process, edge.to.port).length === 0 && !this.routeExists(toNode, fromNode)) {
+        // var edges = this.outEdgesP(edge.from.process, edge.from.port);
+        // // console.log(edge.from.process);
+        // console.log(edges);
+        // for (var i=0; i<edges.length; i++)
+        //   this.state.graph.removeEdge(edge.from.process, edge.from.port, edges[i].to.node, edges[i].to.port);
+
+        this.state.graph.addEdge(edge.from.process, edge.from.port, edge.to.process, edge.to.port, edge.metadata);
+      }
+    },
+    arraysEqual: function(a, b) {
+      if (a === b) return true;
+      if (a === null || b === null) return false;
+      if (a.length != b.length) return false;
+
+      for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    },
+    routeExists: function(fromNode, toNode) {
+      // console.log("fromNode:");
+      // console.log(fromNode.id);
+      // console.log("toNode:");
+      // console.log(toNode.id);
+      var oldVisited = [];
+      var visited = [fromNode.id];
+      while(!this.arraysEqual(oldVisited, visited)){
+        oldVisited = visited;
+        // console.log("old visited:");
+        // console.log(oldVisited);
+        for(var i = 0; i < oldVisited.length; i++){
+          var outE = this.outEdges(oldVisited[i]);
+          // console.log("outE:");
+          // console.log(outE);
+          for(var j = 0; j < outE.length; j++){
+            if(outE[j].to.node == toNode.id) return true;
+            if(visited.indexOf(outE[j].to.node) == -1) 
+              visited = visited.concat(outE[j].to.node);
+          }
+        }
+      }
+      return false;
+    },
+    inEdgesP: function(node, port) {
+      var check = function(edge) {
+        return edge.to.node == node && edge.to.port == port;
+      };
+      return this.state.graph.edges.filter(check);
+    },
+    inEdges: function(node) {
+      var check = function(edge) {
+        return edge.to.node == node;
+      };
+      return this.state.graph.edges.filter(check);
+    },
+    outEdgesP: function(node, port) {
+      var check = function(edge) {
+        return edge.from.node == node && edge.from.port == port;
+      };
+      return this.state.graph.edges.filter(check);
+    },
+    outEdges: function(node) {
+      var check = function(edge) {
+        return edge.from.node == node;
+      };
+      return this.state.graph.edges.filter(check);
+    },
+    typeSubset: function(inT, outT) {
+      if (inT === outT) return true;
+
+      // var isLowerCase = function(char) {
+      //   return !!/[a-z]/.exec(char[0]);
+      // };
+      // if (isLowerCase(outT)) return true;
+      // // this is a HACK!!
+      // // the type is probably a -> a
+      // if (isLowerCase(inT)) return true;
+      return false;
     },
     getType: function(ports, port) {
       for (var i=0; i<ports.length; i++) { 

@@ -372,6 +372,11 @@ module.exports.register = function (context) {
       var inports = this.props.ports.inports;
       keys = Object.keys(inports);
       count = keys.length;
+      if (!Array.prototype.last){
+        Array.prototype.last = function(){
+          return this[this.length - 1];
+        };
+      }
       // Make views
       var inportViews = keys.map(function(key){
         var info = inports[key];
@@ -380,7 +385,7 @@ module.exports.register = function (context) {
           graph: graph,
           node: node,
           key: processKey + ".in." + info.label,
-          label: info.label,
+          label: info.label.split("$").last(),
           processKey: processKey,
           isIn: true,
           isExport: isExport,
@@ -409,7 +414,7 @@ module.exports.register = function (context) {
           graph: graph,
           node: node,
           key: processKey + ".out." + info.label,
-          label: info.label,
+          label: info.label.split("$").last(),
           processKey: processKey,
           isIn: false,
           isExport: isExport,
