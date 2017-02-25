@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "dependencies": {
+    "bower": "^1.7.9",
     "express": "4.14.1",
     "fbp-graph": "^0.1.0",
     "font-awesome": "^4.6.3",
@@ -39,6 +40,7 @@
     "start": "grunt dev",
     "test": "grunt test",
     "build": "grunt build",
+    "postinstall": "bower install",
     "preversion": "grunt test",
     "postversion": "git push && git push --tags"
   },
